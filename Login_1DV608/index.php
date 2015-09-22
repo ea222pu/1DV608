@@ -31,7 +31,6 @@ $dtv = new DateTimeView();
 $lv = new LayoutView();
 
 //Create controller
-$controller = new LoginController($model, $v);
+$controller = new LoginController($model, $v, $lv, $dtv);
 
 $controller->listen();
-$lv->render($model->isLoggedIn(), $v, $dtv);

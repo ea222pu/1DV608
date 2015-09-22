@@ -14,7 +14,8 @@ class UserList {
     }
 
     /**
-    * Iterates over list to find user by $username. Returns user if found, else false
+    * Iterates over list to find user by $username. Returns
+    * user if found, else false
     *
     * @param String $username
     * @return User | boolean

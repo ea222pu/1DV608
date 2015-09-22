@@ -25,9 +25,11 @@ class LoginView {
 	/**
 	 * Create HTTP response
 	 *
-	 * Should be called after a login attempt has been determined
+	 * Should be called after a login attempt has been
+	 * determined
 	 *
-	 * @return  void BUT writes to standard output and cookies!
+	 * @return  void BUT writes to standard output and
+	 * cookies!
 	 */
 	public function response() {
 		$response = '';
@@ -40,7 +42,7 @@ class LoginView {
 	}
 
 	/**
-	* Generate HTML code on the output buffer for the logout button
+	* Generate HTML code on the output buffer for the logout * button
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
@@ -54,7 +56,7 @@ class LoginView {
 	}
 
 	/**
-	* Generate HTML code on the output buffer for the logout button
+	* Generate HTML code on the output buffer for the logout * button
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
@@ -105,6 +107,15 @@ class LoginView {
 			case 5:
 				$this->message = 'Wrong name or password';
 				break;
+			case 6:
+				$this->message = 'Welcome and you will be remembered';
+				break;
+			case 7:
+				$this->message = 'Welcome back with cookie';
+				break;
+			case 8:
+				$this->message = 'Wrong information in cookies';
+				break;
 		}
 	}
 
@@ -123,6 +134,36 @@ class LoginView {
 	}
 
 	/**
+	* @return String
+	*/
+	public function getCookieName() {
+		return $_COOKIE[self::$cookieName];
+	}
+
+	/**
+	* @return String
+	*/
+	public function getCookiePassword() {
+		return $_COOKIE[self::$cookiePassword];
+	}
+
+	/**
+	* @return boolean
+	*/
+	public function getPersistentLogin() {
+		if(isset($_POST[self::$keep]))
+			return true;
+		return false;
+	}
+
+	public function isCookiesSet() {
+		if(isset($_COOKIE[self::$cookieName]) && isset($_COOKIE[self::$cookiePassword]))
+			return true;
+		return false;
+	}
+
+	/**
+	* Set cookies if requested
 	* Also for remembering username from login attempt
 	*
 	* @return boolean
@@ -130,6 +171,10 @@ class LoginView {
 	public function loginButtonPost() {
 		if(isset($_POST[self::$login])) {
 			$this->rememberName = $_POST[self::$name];
+			if(isset($_POST[self::$keep])) {
+				setcookie(self::$cookieName, $_POST[self::$name], time()+3600);
+				setcookie(self::$cookiePassword, base64_encode($_POST[self::$password]), time()+3600);
+			}
 			return true;
 		}
 		return false;
@@ -139,9 +184,19 @@ class LoginView {
 	* @return boolean
 	*/
 	public function logoutButtonPost() {
-		if(isset($_POST[self::$logout]))
+		if(isset($_POST[self::$logout])) {
 			return true;
+		}
 		return false;
 	}
 
+	/**
+	* Remove cookies with login credentials
+	*/
+	public function deleteCredentialCookies() {
+		if(isset($_COOKIE[self::$cookieName]))
+			setcookie(self::$cookieName, "", time()-3600);
+		if(isset($_COOKIE[self::$cookiePassword]))
+			setcookie(self::$cookiePassword, "", time()-3600);
+	}
 }
